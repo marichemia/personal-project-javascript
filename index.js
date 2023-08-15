@@ -49,7 +49,9 @@ class Person {
 
     constructor(data) {
 
-        this._validate(data);
+
+
+        /*this._validate(data);
 
         this.name = {
             first: data.name.first,
@@ -58,7 +60,7 @@ class Person {
         this.dateOfBirth = data.dateOfBirth;
         this.phones = data.phones;
         this.sex = data.sex;
-        this.description = data.description;
+        this.description = data.description;*/
     }
 
     _validate(data) {
@@ -118,6 +120,34 @@ class Person {
         }
 
     }
+
+}
+
+class Teachers extends Person {
+    constructor(data) {
+
+        this.teachers = [];
+        this.counter = 1;
+
+        //validate subjects
+
+        /*if (!data.subjects || Array.isArray(data.subjects)) {
+            throw new Error('subjects property invalid or missing')
+        } else {
+            for (let i = 0; i < data.subjects.length; i++) {
+                if (data.subjects.lengths === 0) {
+                    break;
+                } else if (typeof data.subjects[i] !== 'object' || Array.isArray(data.subjects[i])) {
+                    throw new Error(`subject #${i + 1} invalid`);
+                } else if (!data.subjects[i].subject || typeof data.subjects[i].subject !== 'string') {
+                    throw new Error(`subject #${i + 1} invalid or missing`);
+                }
+            }
+        }
+
+        this.subjects = data.subjects;*/
+    }
+
 
 }
 
