@@ -85,7 +85,9 @@ class Person {
             throw new Error('dateOfBirth property invalid or missing')
         }
 
-        //validate phones arr
+        //validate phones arr (+0 000-000-0000)
+
+        const phoneRegex = /^\+1\s\d{3}-\d{3}-\d{4}$/;
 
         if (!data.phones || !Array.isArray(data.phones)) {
             throw new Error('phones property invalid or missing');
@@ -93,7 +95,7 @@ class Person {
             throw new Error('phones array is empty')
         } else {
             for (let i = 0; i < data.phones.length; i++) {
-                if (!data.phones[i].phone || typeof data.phones[i].phone !== 'string') {
+                if (!data.phones[i].phone || typeof data.phones[i].phone !== 'string' || !phoneRegex.test(data.phones[i].phone)) {
                     throw new Error(`phones property phone invalid or missing on phone number #${i + 1}`);
                 } else if (!data.phones[i].primary || typeof data.phones[i].primary !== 'boolean') {
                     throw new Error(`phones property primary invalid or missing on phone number #${i + 1}`);
@@ -110,6 +112,7 @@ class Person {
         }
 
         //validate description
+
         if (!data.description || typeof data.description !== 'string') {
             throw new Error('description property invalid or missing')
         }
