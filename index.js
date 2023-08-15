@@ -21,7 +21,7 @@ class Subjects {
         if (this.verify(subject)) {
             return `${this.subjects.splice(this.subjects.findIndex((item) => item.id === subject.id), 1)[0].title} removed;`
         } else {
-            throw new Error('Invalid Input: subject does not exist');
+            throw new Error('Invalid Input: Subject not found');
         }
     }
 
@@ -43,4 +43,82 @@ class Subjects {
     }
 
 }
+
+
+class Person {
+
+    constructor(data) {
+
+        this._validate(data);
+
+        this.name = {
+            first: data.name.first,
+            last: data.name.last
+        };
+        this.dateOfBirth = data.dateOfBirth;
+        this.phones = data.phones;
+        this.sex = data.sex;
+        this.description = data.description;
+    }
+
+    _validate(data) {
+
+        //validate data
+
+        if (!data || typeof data !== 'object' || Array.isArray(data)) {
+            throw new Error('input missing or invalid')
+        }
+
+        // validate name
+
+        if (!data.name || typeof data.name !== 'object' || Array.isArray(data.name)) {
+            throw new Error('name property invalid or missing')
+        } else if (!data.name.first || !data.name.last || typeof data.name.first !== 'string' || typeof data.name.last !== 'string') {
+            throw new Error('name property(ies) invalid or missing');
+        }
+
+        // validate dob (YYYY-MM-DD)
+
+        const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+
+        if (!data.dateOfBirth || typeof data.dateOfBirth !== 'string' || !dateRegex.test(data.dateOfBirth)) {
+            throw new Error('dateOfBirth property invalid or missing')
+        }
+
+        //validate phones arr
+
+        if (!data.phones || !Array.isArray(data.phones)) {
+            throw new Error('phones property invalid or missing');
+        } else if (data.phones.length === 0) {
+            throw new Error('phones array is empty')
+        } else {
+            for (let i = 0; i < data.phones.length; i++) {
+                if (!data.phones[i].phone || typeof data.phones[i].phone !== 'string') {
+                    throw new Error(`phones property phone invalid or missing on phone number #${i + 1}`);
+                } else if (!data.phones[i].primary || typeof data.phones[i].primary !== 'boolean') {
+                    throw new Error(`phones property primary invalid or missing on phone number #${i + 1}`);
+                }
+            }
+        }
+
+        //validate sex
+
+        if (!data.sex) {
+            throw new Error('sex property missing')
+        } else if (data.sex !== 'male' || data.sex !== 'female') {
+            throw new Error('sex property invalid')
+        }
+
+        //validate description
+        if (!data.description || typeof data.description !== 'string') {
+            throw new Error('description property invalid or missing')
+        }
+
+    }
+
+}
+
+
+
+
 
