@@ -145,5 +145,37 @@ class Teachers extends Person {
         return teacher.id;
     }
 
+    read(teacherId) {
+        //validate passed value
+        if (!teacherId || typeof teacherId !== 'number' || teacherId >= this.counter) {
+            throw new Error('id invalid or missing')
+            //check if a teacher with the id exists
+        } else if (!this.arr.find(obj => obj.id === teacherId)) {
+            throw new Error('teacher with provided id not found')
+        } else {
+            //return teacher info
+            return this.arr.find(obj => obj.id === teacherId);
+        }
+    }
+
+    update(teacherId, teacherInfo) {
+        this._validate(teacherInfo);
+        if (this.read(teacherId)) {
+            const index = this.arr.findIndex(obj => obj.id === teacherId);
+
+            this.arr[index] = teacherInfo;
+
+            return this.arr[index];
+        }
+    }
+
+    remove(teacherId) {
+        if (this.read(teacherId)) {
+            return `teacher with id #${this.arr.splice(this.arr.findIndex((item) => item.id === teacherId), 1)[0].id} removed;`
+        }
+    }
+
+
+
 
 }
