@@ -54,6 +54,48 @@ class Person {
         this.counter = 1;
     }
 
+    add(object) {
+        this._validate(object);
+
+        //validate subjects arr
+
+        this.arr.push(object);
+        object.id = this.counter;
+        this.counter++;
+
+        return object.id;
+    }
+
+    read(objectId) {
+        //validate passed value
+        if (!objectId || typeof objectId !== 'number' || objectId >= this.counter) {
+            throw new Error('id invalid or missing')
+            //check if a teacher with the id exists
+        } else if (!this.arr.find(obj => obj.id === objectId)) {
+            throw new Error('person with provided id not found')
+        } else {
+            //return teacher info
+            return this.arr.find(obj => obj.id === objectId);
+        }
+    }
+
+    update(objectId, objectInfo) {
+        this._validate(objectInfo);
+        if (this.read(objectId)) {
+            const index = this.arr.findIndex(obj => obj.id === objectId);
+
+            this.arr[index] = objectInfo;
+
+            return this.arr[index];
+        }
+    }
+
+    remove(objectId) {
+        if (this.read(objectId)) {
+            return `person with id #${this.arr.splice(this.arr.findIndex((item) => item.id === objectId), 1)[0].id} removed;`
+        }
+    }
+
     _validate(data) {
 
         //validate data
@@ -115,67 +157,17 @@ class Person {
 }
 
 class Teachers extends Person {
+
     constructor() {
         super();
     }
 
-    add(teacher) {
-        this._validate(teacher);
+}
 
-        //validate subjects arr
+class Pupils extends Person {
 
-        if (!teacher.subjects || !Array.isArray(teacher.subjects)) {
-            throw new Error('subjects property invalid or missing')
-        } else {
-            for (let i = 0; i < teacher.subjects.length; i++) {
-                if (teacher.subjects.lengths === 0) {
-                    break;
-                } else if (typeof teacher.subjects[i] !== 'object' || Array.isArray(teacher.subjects[i])) {
-                    throw new Error(`subject #${i + 1} invalid`);
-                } else if (!teacher.subjects[i].subject || typeof teacher.subjects[i].subject !== 'string') {
-                    throw new Error(`subject #${i + 1} invalid or missing`);
-                }
-            }
-        }
-
-        this.arr.push(teacher);
-        teacher.id = this.counter;
-        this.counter++;
-
-        return teacher.id;
+    constructor() {
+        super();
     }
-
-    read(teacherId) {
-        //validate passed value
-        if (!teacherId || typeof teacherId !== 'number' || teacherId >= this.counter) {
-            throw new Error('id invalid or missing')
-            //check if a teacher with the id exists
-        } else if (!this.arr.find(obj => obj.id === teacherId)) {
-            throw new Error('teacher with provided id not found')
-        } else {
-            //return teacher info
-            return this.arr.find(obj => obj.id === teacherId);
-        }
-    }
-
-    update(teacherId, teacherInfo) {
-        this._validate(teacherInfo);
-        if (this.read(teacherId)) {
-            const index = this.arr.findIndex(obj => obj.id === teacherId);
-
-            this.arr[index] = teacherInfo;
-
-            return this.arr[index];
-        }
-    }
-
-    remove(teacherId) {
-        if (this.read(teacherId)) {
-            return `teacher with id #${this.arr.splice(this.arr.findIndex((item) => item.id === teacherId), 1)[0].id} removed;`
-        }
-    }
-
-
-
 
 }
