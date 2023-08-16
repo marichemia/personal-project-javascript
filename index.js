@@ -17,9 +17,12 @@ class Subjects {
         return this.subjects.some((item) => item.id === subject.id);
     }
 
-    remove(subject) {
-        if (this.verify(subject)) {
-            return `${this.subjects.splice(this.subjects.findIndex((item) => item.id === subject.id), 1)[0].title} removed;`
+    remove(subjectId) {
+        let subject = this.subjects.find(obj => obj.id === subjectId);
+
+        if (subject && this.verify(subject)) {
+            this.subjects.splice(this.subjects.findIndex((item) => item.id === subjectId), 1)
+            return true;
         } else {
             throw new Error('Invalid Input: Subject not found');
         }
@@ -31,11 +34,15 @@ class Subjects {
 
     _validate(subject) {
 
-        if (typeof subject !== 'object' || Array.isArray(subject)) {
+        if (this.verify(subject)) {
+            throw new Error('subject already exists')
+        }
+
+        if (!(subject instanceof Object) || Array.isArray(subject)) {
             throw new Error('Invalid Input: wrong argument type');
         } else if (!subject.title || !subject.lessons) {
             throw new Error('Invalid Input: required parameter(s) missing');
-        } else if (typeof subject.title !== 'string' || typeof subject.lessons !== 'number') {
+        } else if (typeof subject.title !== 'string' || typeof subject.lessons !== 'number' || subject.lessons <= 0) {
             throw new Error('Invalid Input: wrong property type');
         } else if (subject.description && typeof subject.description !== 'string') {
             throw new Error('Invalid Input: wrong property type');
@@ -43,6 +50,8 @@ class Subjects {
     }
 
 }
+
+
 
 
 
@@ -169,5 +178,42 @@ class Pupils extends Person {
     constructor() {
         super();
     }
+
+}
+
+class Groups {
+
+    constructor() {
+        this.groups = [];
+        this.counter = 1;
+    }
+
+    add(room) {
+        if (!room || typeof room !== 'number' || room <= 0) {
+            throw new Error('room number invalid or missing')
+        }
+
+
+        this.groups.push({ 'room': room, 'id': this.counter, 'pupils': [] });
+        this.counter++;
+
+        return this.groups[this.counter - 2].id
+
+    }
+
+    addPupil(groupId, pupil) {
+
+        const group = this.groups.find(obj => obj.id === groupId);
+
+        if (!group) {
+            throw new Error('group with provided id does not exist')
+        }
+
+        group.pupils.push(pupil);
+
+        return group;
+    }
+
+
 
 }
