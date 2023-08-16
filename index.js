@@ -45,22 +45,13 @@ class Subjects {
 }
 
 
+
 class Person {
 
     constructor(data) {
 
-
-
-        /*this._validate(data);
-
-        this.name = {
-            first: data.name.first,
-            last: data.name.last
-        };
-        this.dateOfBirth = data.dateOfBirth;
-        this.phones = data.phones;
-        this.sex = data.sex;
-        this.description = data.description;*/
+        this.arr = [];
+        this.counter = 1;
     }
 
     _validate(data) {
@@ -87,7 +78,7 @@ class Person {
             throw new Error('dateOfBirth property invalid or missing')
         }
 
-        //validate phones arr (+0 000-000-0000)
+        //validate phones arr (+1 000-000-0000)
 
         const phoneRegex = /^\+1\s\d{3}-\d{3}-\d{4}$/;
 
@@ -109,7 +100,7 @@ class Person {
 
         if (!data.sex) {
             throw new Error('sex property missing')
-        } else if (data.sex !== 'male' || data.sex !== 'female') {
+        } else if (data.sex !== 'male' && data.sex !== 'female') {
             throw new Error('sex property invalid')
         }
 
@@ -124,34 +115,35 @@ class Person {
 }
 
 class Teachers extends Person {
-    constructor(data) {
+    constructor() {
+        super();
+    }
 
-        this.teachers = [];
-        this.counter = 1;
+    add(teacher) {
+        this._validate(teacher);
 
-        //validate subjects
+        //validate subjects arr
 
-        /*if (!data.subjects || Array.isArray(data.subjects)) {
+        if (!teacher.subjects || !Array.isArray(teacher.subjects)) {
             throw new Error('subjects property invalid or missing')
         } else {
-            for (let i = 0; i < data.subjects.length; i++) {
-                if (data.subjects.lengths === 0) {
+            for (let i = 0; i < teacher.subjects.length; i++) {
+                if (teacher.subjects.lengths === 0) {
                     break;
-                } else if (typeof data.subjects[i] !== 'object' || Array.isArray(data.subjects[i])) {
+                } else if (typeof teacher.subjects[i] !== 'object' || Array.isArray(teacher.subjects[i])) {
                     throw new Error(`subject #${i + 1} invalid`);
-                } else if (!data.subjects[i].subject || typeof data.subjects[i].subject !== 'string') {
+                } else if (!teacher.subjects[i].subject || typeof teacher.subjects[i].subject !== 'string') {
                     throw new Error(`subject #${i + 1} invalid or missing`);
                 }
             }
         }
 
-        this.subjects = data.subjects;*/
+        this.arr.push(teacher);
+        teacher.id = this.counter;
+        this.counter++;
+
+        return teacher.id;
     }
 
 
 }
-
-
-
-
-
