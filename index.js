@@ -89,19 +89,19 @@ class Person {
     }
 
     update(objectId, objectInfo) {
-        this._validate(objectInfo);
+
         if (this.read(objectId)) {
             const index = this.arr.findIndex(obj => obj.id === objectId);
-
-            this.arr[index] = objectInfo;
-
-            return this.arr[index];
+            //allowing partial updates?
+            Object.assign(this.arr[index], objectInfo);
+            this._validate(this.arr[index]);
+            return this.arr[index].id;
         }
     }
 
     remove(objectId) {
         if (this.read(objectId)) {
-            return `person with id #${this.arr.splice(this.arr.findIndex((item) => item.id === objectId), 1)[0].id} removed;`
+            return this.arr.splice(this.arr.findIndex((item) => item.id === objectId), 1)[0].id
         }
     }
 
@@ -132,6 +132,7 @@ class Person {
         //validate phones arr (+1 000-000-0000)
 
         const phoneRegex = /^\+1\s\d{3}-\d{3}-\d{4}$/;
+        let primary = 0;
 
         if (!data.phones || !Array.isArray(data.phones)) {
             throw new Error('phones property invalid or missing');
@@ -141,9 +142,49 @@ class Person {
             for (let i = 0; i < data.phones.length; i++) {
                 if (!data.phones[i].phone || typeof data.phones[i].phone !== 'string' || !phoneRegex.test(data.phones[i].phone)) {
                     throw new Error(`phones property phone invalid or missing on phone number #${i + 1}`);
-                } else if (!data.phones[i].primary || typeof data.phones[i].primary !== 'boolean') {
+                } else if (typeof data.phones[i].primary !== 'boolean') {
                     throw new Error(`phones property primary invalid or missing on phone number #${i + 1}`);
+                } else if (!data.phones[i].primary && data.phones[i].primary !== false) {
+                    throw new Error(`phones property primary missing on phone number #${i + 1}`)
                 }
+
+                if (data.phones[i].primary) {
+                    primary++;
+                }
+            }
+
+            if (primary > 1) {
+                throw new Error('primary number already exists');
+            }
+        }
+
+        // Validate emails arr
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        let primaryEmail = 0; // To keep track of primary email count
+
+        if (!data.emails || !Array.isArray(data.emails)) {
+            throw new Error('emails property invalid or missing');
+        } else if (data.emails.length === 0) {
+            throw new Error('emails array is empty');
+        } else {
+            for (let i = 0; i < data.emails.length; i++) {
+                if (!data.emails[i].email || typeof data.emails[i].email !== 'string' || !emailRegex.test(data.emails[i].email)) {
+                    throw new Error(`emails property email invalid or missing on email #${i + 1}`);
+                } else if (typeof data.emails[i].primary !== 'boolean') {
+                    throw new Error(`emails property primary invalid or missing on email #${i + 1}`);
+                } else if (!data.emails[i].primary && data.emails[i].primary !== false) {
+                    throw new Error(`emails property primary value missing on email #${i + 1}`)
+                }
+
+                // Count primary emails
+                if (data.emails[i].primary) {
+                    primaryEmail++;
+                }
+            }
+
+            // Check if there's more than one primary email
+            if (primaryEmail > 1) {
+                throw new Error('primary email already exists');
             }
         }
 
