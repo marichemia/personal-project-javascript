@@ -54,16 +54,12 @@ class Subjects {
 
 }
 
-
-
-
-
 class Person {
 
     constructor(data) {
 
         this.arr = [];
-        this.counter = 1;
+        this.counter = 0;
     }
 
     add(object) {
@@ -80,7 +76,7 @@ class Person {
 
     read(objectId) {
         //validate passed value
-        if (!objectId || typeof objectId !== 'number' || objectId >= this.counter) {
+        if (typeof objectId !== 'number' || objectId >= this.counter) {
             throw new Error('id invalid or missing')
             //check if a teacher with the id exists
         } else if (!this.arr.find(obj => obj.id === objectId)) {
@@ -104,7 +100,7 @@ class Person {
 
     remove(objectId) {
         if (this.read(objectId)) {
-            return this.arr.splice(this.arr.findIndex((item) => item.id === objectId), 1)[0].id
+            return !!this.arr.splice(this.arr.findIndex((item) => item.id === objectId), 1)
         }
     }
 
@@ -221,6 +217,16 @@ class Pupils extends Person {
 
     constructor() {
         super();
+    }
+
+    add(object) {
+        this._validate(object);
+
+        this.arr.push(object);
+        object.id = this.counter;
+        this.counter++;
+
+        return object;
     }
 
 }
