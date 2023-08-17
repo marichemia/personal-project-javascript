@@ -302,6 +302,109 @@ class Groups {
         return this.groups;
     }
 
+}
+
+class Gradebooks {
+    constructor(groups, teachers, subjects) {
+
+        if (!groups || !teachers || !subjects) {
+            throw new Error('paramater(s) missing');
+        } else if (typeof groups !== 'object' || Array.isArray(groups)) {
+            throw new Error('groups parameter invalid')
+        } else if (typeof teachers !== 'object' || Array.isArray(teachers)) {
+            throw new Error('teachers parameter invalid')
+        } else if (typeof subjects !== 'object' || Array.isArray(subjects)) {
+            throw new Error('subjects parameter invalid')
+        }
+
+        this.gradebooks = [];
+        this.groups = groups;
+        this.teachers = teachers;
+        this.subjects = subjects;
+        this.counter = 1;
+    }
+
+
+    add(groupId) {
+        if (!groupId || typeof groupId !== 'number' || groupId <= 0) {
+            throw new Error('groupId invalid or missing');
+        }
+
+
+        this.gradebooks.push({
+            id: this.counter,
+            groupId: groupId,
+            records: []
+        });
+        this.counter++;
+        return this.gradebooks[counter - 2].id
+
+    }
+
+    clear() {
+        this.gradebooks = [];
+        return true;
+    }
+
+    addRecord(gradebookId, obj) {
+        if (!gradebookId || typeof gradebookId !== 'number' || gradebookId <= 0) {
+            throw new Error('gradebookId invalid or missing');
+        } else if (!obj || typeof obj !== 'object' || Array.isArray(obj)) {
+            throw new Error('record parameter invalid or missing')
+        } else if (!obj.pupilId || !obj.teacherId || !obj.subjectId || !obj.lesson || !obj.mark) {
+            throw new Error('property(ies) are missing from the record')
+        } else if (typeof obj.pupilId !== 'number' || typeof obj.teacherId !== 'number' || typeof obj.subjectId !== 'number' || typeof obj.lesson !== 'number' || typeof obj.mark !== 'number') {
+            throw new Error('invalid property(ies) in record')
+        }
+
+        const gradebook = this.gradebooks.findIndex(obj => obj.id === gradebookId);
+
+        this.gradebooks[gradebookId].records.push(obj);
+
+        return true;
+    }
+
+    read(gradebookId, pupilId) {
+        const gradebook = this.gradebooks.find(gradebook => gradebook.id === gradebookId);
+
+        if (!gradebook) {
+            throw new Error('Gradebook not found');
+        }
+
+        const group = this.groups.find(group => group.id === gradebook.groupId);
+        const pupil = group ? group.pupils.find(pupil => pupil.id === pupilId) : undefined;
+
+        if (!pupil) {
+            throw new Error('Pupil not found in the specified group');
+        }
+
+        const records = gradebook.records.filter(record => record.pupilId === pupilId)
+            .map(record => {
+                const teacher = this.teachers.find(teacher => teacher.id === record.teacherId);
+                const subject = this.subjects.find(subject => subject.id === record.subjectId);
+
+                return {
+                    teacher: teacher ? teacher.name : undefined,
+                    subject: subject ? subject.name : undefined,
+                    lesson: record.lesson,
+                    mark: record.mark
+                };
+            });
+
+        const result = {
+            name: pupil.name,
+            records: records
+        };
+
+        return result;
+    }
+
+    readAll(gradebookId) {
+        return this.gradebooks.find(gradesbook => gradesbook.id === gradebookId);
+    }
+
+
+
 
 
 }
