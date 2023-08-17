@@ -235,11 +235,11 @@ class Groups {
 
     constructor() {
         this.groups = [];
-        this.counter = 1;
+        this.counter = 0;
     }
 
     add(room) {
-        if (!room || typeof room !== 'number' || room <= 0) {
+        if (typeof room !== 'number' || room < 0) {
             throw new Error('room number invalid or missing')
         }
 
@@ -247,7 +247,7 @@ class Groups {
         this.groups.push({ 'room': room, 'id': this.counter, 'pupils': [] });
         this.counter++;
 
-        return this.groups[this.counter - 2].id
+        return this.groups[this.counter - 1].id
 
     }
 
@@ -270,9 +270,9 @@ class Groups {
         const pupil = group.pupils.find(obj => obj.id === pupilId);
         const pupilIndex = group.pupils.findIndex(obj => obj.id === pupilId);
 
-        if (!groupId || groupId <= 0 || typeof groupId !== 'number') {
+        if (groupId < 0 || typeof groupId !== 'number') {
             throw new Error('groupId invalid or missing');
-        } else if (!pupilId || pupilId <= 0 || typeof pupilId !== 'number') {
+        } else if (pupilId < 0 || typeof pupilId !== 'number') {
             throw new Error('pupilId invalid or missing');
         } else if (!group) {
             throw new Error('group with provided id does not exist');
@@ -298,10 +298,15 @@ class Groups {
     }
 
     read(groupId) {
+
+        if (typeof groupId !== 'number' || groupId < 0) {
+            throw new Error('groupId invalid or missing');
+        }
+
         const groupIndex = this.groups.findIndex(obj => obj.id === groupId);
 
-        if (!groupId || typeof groupId !== 'number' || groupId <= 0) {
-            throw new Error('groupId invalid or missing');
+        if (groupIndex === -1) {
+            throw new Error('group with provided id does not exist');
         }
 
         return this.groups[groupIndex];
