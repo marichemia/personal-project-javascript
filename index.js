@@ -2,7 +2,7 @@ class Subjects {
 
     constructor() {
         this.subjects = [];
-        this.counter = 1;
+        this.counter = 0;
     }
 
     add(subject) {
@@ -14,14 +14,17 @@ class Subjects {
     }
 
     verify(subject) {
-        return this.subjects.some((item) => item.id === subject.id);
+        if (!subject || typeof subject !== 'object' || Array.isArray(subject)) {
+            throw new Error('subject parameter invalid or missing')
+        }
+        return this.subjects.some((item) => item.title === subject.title);
     }
 
     remove(subjectId) {
-        let subject = this.subjects.find(obj => obj.id === subjectId);
+        let subjectIndex = this.subjects.findIndex(obj => obj.id === subjectId);
 
-        if (subject && this.verify(subject)) {
-            this.subjects.splice(this.subjects.findIndex((item) => item.id === subjectId), 1)
+        if (subjectIndex !== -1 && this.verify(this.subjects[subjectIndex])) {
+            this.subjects.splice(subjectIndex, 1)
             return true;
         } else {
             throw new Error('Invalid Input: Subject not found');
@@ -337,7 +340,7 @@ class Gradebooks {
             records: []
         });
         this.counter++;
-        return this.gradebooks[counter - 2].id
+        return this.gradebooks[this.counter - 2].id
 
     }
 
@@ -399,9 +402,7 @@ class Gradebooks {
         return result;
     }
 
-    readAll(gradebookId) {
-        return this.gradebooks.find(gradesbook => gradesbook.id === gradebookId);
-    }
+
 
 
 
