@@ -424,5 +424,25 @@ class Gradebooks {
         };
     }
 
+    readAll(gradebookId) {
+        const gradebook = this.gradebooks.find(book => book.id === gradebookId);
+
+        if (!gradebook) {
+            throw new Error(`Gradebook with ID ${gradebookId} not found.`);
+        }
+
+        const allGroups = this.groups.readAll();
+
+        const allPupils = [];
+
+        for (const group of allGroups) {
+            for (const pupil of group.pupils) {
+                allPupils.push(pupil);
+            }
+        }
+
+        return allPupils;
+    }
+
 
 }
