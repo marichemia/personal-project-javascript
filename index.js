@@ -288,7 +288,7 @@ class Groups {
     update(groupId, obj) {
         const groupIndex = this.groups.findIndex(obj => obj.id === groupId);
 
-        if (!obj.room || typeof obj.room !== 'number' || obj.room <= 0) {
+        if (typeof obj.room !== 'number' || obj.room < 0) {
             throw new Error('room number invalid or missing')
         }
 
@@ -319,6 +319,7 @@ class Groups {
 }
 
 class Gradebooks {
+
     constructor(groups, teachers, subjects) {
 
         if (!groups || !teachers || !subjects) {
@@ -335,24 +336,23 @@ class Gradebooks {
         this.groups = groups;
         this.teachers = teachers;
         this.subjects = subjects;
-        this.counter = 1;
+        this.counter = 0;
     }
 
-
     add(groupId) {
-        if (!groupId || typeof groupId !== 'number' || groupId <= 0) {
+        if (typeof groupId !== 'number' || groupId < 0) {
             throw new Error('groupId invalid or missing');
         }
 
 
-        this.gradebooks.push({
+        this.gradebooks[groupId] = ({
             id: this.counter,
             groupId: groupId,
             records: []
         });
-        this.counter++;
-        return this.gradebooks[this.counter - 2].id
 
+        this.counter++;
+        return this.gradebooks[groupId].id
     }
 
     clear() {
@@ -360,63 +360,69 @@ class Gradebooks {
         return true;
     }
 
+
     addRecord(gradebookId, obj) {
-        if (!gradebookId || typeof gradebookId !== 'number' || gradebookId <= 0) {
+
+        for (const key in obj) {
+            if (obj[key] === undefined) {
+                throw new Error(`Property "${key}" is missing`);
+            }
+        }
+
+        if (typeof gradebookId !== 'number' || gradebookId < 0) {
             throw new Error('gradebookId invalid or missing');
         } else if (!obj || typeof obj !== 'object' || Array.isArray(obj)) {
             throw new Error('record parameter invalid or missing')
-        } else if (!obj.pupilId || !obj.teacherId || !obj.subjectId || !obj.lesson || !obj.mark) {
-            throw new Error('property(ies) are missing from the record')
         } else if (typeof obj.pupilId !== 'number' || typeof obj.teacherId !== 'number' || typeof obj.subjectId !== 'number' || typeof obj.lesson !== 'number' || typeof obj.mark !== 'number') {
             throw new Error('invalid property(ies) in record')
         }
 
-        const gradebook = this.gradebooks.findIndex(obj => obj.id === gradebookId);
+        const gradebookIndex = this.gradebooks.findIndex(obj => obj.id === gradebookId);
 
-        this.gradebooks[gradebookId].records.push(obj);
+        this.gradebooks[gradebookIndex].records.push(obj);
 
         return true;
     }
 
+
+
     read(gradebookId, pupilId) {
-        const gradebook = this.gradebooks.find(gradebook => gradebook.id === gradebookId);
+        const gradebook = this.gradebooks.find(book => book.id === gradebookId);
 
         if (!gradebook) {
-            throw new Error('Gradebook not found');
+            throw new Error('Gradebook with provided id not found');
         }
 
-        const group = this.groups.find(group => group.id === gradebook.groupId);
-        const pupil = group ? group.pupils.find(pupil => pupil.id === pupilId) : undefined;
+        const group = this.groups.read(gradebook.groupId);
+
+        const pupil = group.pupils.find(pupil => pupil.id === pupilId);
 
         if (!pupil) {
-            throw new Error('Pupil not found in the specified group');
+            throw new Error(`Pupil with ID ${pupilId} not found in gradebook ${gradebookId}.`);
         }
 
-        const records = gradebook.records.filter(record => record.pupilId === pupilId)
-            .map(record => {
-                const teacher = this.teachers.find(teacher => teacher.id === record.teacherId);
-                const subject = this.subjects.find(subject => subject.id === record.subjectId);
+        const pupilName = `${pupil.name.first} ${pupil.name.last}`;
+        const records = [];
 
-                return {
-                    teacher: teacher ? teacher.name : undefined,
-                    subject: subject ? subject.name : undefined,
+        for (const record of gradebook.records) {
+            if (record.pupilId === pupilId) {
+                const teacher = this.teachers.read(record.teacherId);
+                const subject = this.subjects.read(record.subjectId);
+
+                records.push({
+                    teacher: `${teacher.name.first} ${teacher.name.last}`,
+                    subject: subject.title,
                     lesson: record.lesson,
-                    mark: record.mark
-                };
-            });
+                    mark: record.mark,
+                });
+            }
+        }
 
-        const result = {
-            name: pupil.name,
-            records: records
+        return {
+            name: pupilName,
+            records: records,
         };
-
-        return result;
     }
-
-
-
-
-
 
 
 }
