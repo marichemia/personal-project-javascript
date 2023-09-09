@@ -104,7 +104,6 @@ var Pupils = /** @class */ (function (_super) {
     Pupils.prototype.add = function (object) {
         this.validatePhones(object.phones);
         this.validateDOB(object.dateOfBirth);
-        object.sex.toLowerCase();
         this.arr.push(object);
         object.id = this.counter;
         this.counter++;
@@ -119,6 +118,8 @@ var Pupils = /** @class */ (function (_super) {
             throw new Error('Person with provided Id does not exist');
         }
         return this.arr.find(function (obj) { return obj.id === objectId; });
+    };
+    Pupils.prototype.update = function (objectId, updatedData) {
     };
     return Pupils;
 }(CommonMethods));

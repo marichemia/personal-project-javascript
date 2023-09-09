@@ -141,7 +141,6 @@ class Pupils extends CommonMethods {
 
         this.validatePhones(object.phones);
         this.validateDOB(object.dateOfBirth);
-        object.sex.toLowerCase();
 
         this.arr.push(object);
         object.id = this.counter;
@@ -161,6 +160,12 @@ class Pupils extends CommonMethods {
 
         return this.arr.find(obj => obj.id === objectId)!;
     }
+
+    update(objectId: number, updatedData: Pupil): number {
+
+    }
+
+
 
 
 
