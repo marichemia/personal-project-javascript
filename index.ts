@@ -10,6 +10,11 @@ interface PhoneObj {
     primary: boolean;
 }
 
+interface EmailObj {
+    email: string;
+    primary: boolean;
+}
+
 interface Pupil {
     name: {
         first: string;
@@ -23,10 +28,7 @@ interface Pupil {
 }
 
 interface Teacher extends Pupil {
-    emails: {
-        email: string;
-        primary: boolean;
-    }[];
+    emails: EmailObj[];
     subjects: {
         subject: string;
     }[];
@@ -43,15 +45,16 @@ class CommonMethods {
         }
     }
 
-    validateDOB(str: string): boolean {
+    validateDOB(str: string): void {
 
         //(YYYY-MM-DD)
         const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
-        return dateRegex.test(str);
-
+        if (!dateRegex.test(str)) {
+            throw new Error('wrong format DOB')
+        }
     }
 
-    validatePhones(arr: PhoneObj[]): boolean {
+    validatePhones(arr: PhoneObj[]): void {
 
         //(+1 000-000-0000)
 
@@ -71,11 +74,9 @@ class CommonMethods {
         }
 
         primary = 0;
-
-        return true;
     }
 
-    validateEmail(str: string): boolean {
+    validateEmails(arr: EmailObj[]): boolean {
         return true;
     }
 }
@@ -136,16 +137,32 @@ class Pupils extends CommonMethods {
         this.counter = 0;
     }
 
-    add(object: Pupil): number {
+    add(object: Pupil): Pupil {
 
         this.validatePhones(object.phones);
+        this.validateDOB(object.dateOfBirth);
+        object.sex.toLowerCase();
 
         this.arr.push(object);
         object.id = this.counter;
         this.counter++;
 
-        return object.id;
+        return object;
     }
+
+    read(objectId: number | undefined): Pupil {
+
+        //validate id, check if person with this id exists
+        if (!objectId || objectId >= this.counter || objectId < 0) {
+            throw new Error('Invalid Id');
+        } else if (!this.arr.find(obj => obj.id === objectId)) {
+            throw new Error('Person with provided Id does not exist');
+        }
+
+        return this.arr.find(obj => obj.id === objectId)!;
+    }
+
+
 
 }
 

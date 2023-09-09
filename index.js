@@ -27,7 +27,9 @@ var CommonMethods = /** @class */ (function () {
     CommonMethods.prototype.validateDOB = function (str) {
         //(YYYY-MM-DD)
         var dateRegex = /^\d{4}-\d{2}-\d{2}$/;
-        return dateRegex.test(str);
+        if (!dateRegex.test(str)) {
+            throw new Error('wrong format DOB');
+        }
     };
     CommonMethods.prototype.validatePhones = function (arr) {
         //(+1 000-000-0000)
@@ -47,9 +49,8 @@ var CommonMethods = /** @class */ (function () {
             throw new Error('primary phone number already exists');
         }
         primary = 0;
-        return true;
     };
-    CommonMethods.prototype.validateEmail = function (str) {
+    CommonMethods.prototype.validateEmails = function (arr) {
         return true;
     };
     return CommonMethods;
@@ -102,10 +103,22 @@ var Pupils = /** @class */ (function (_super) {
     }
     Pupils.prototype.add = function (object) {
         this.validatePhones(object.phones);
+        this.validateDOB(object.dateOfBirth);
+        object.sex.toLowerCase();
         this.arr.push(object);
         object.id = this.counter;
         this.counter++;
-        return object.id;
+        return object;
+    };
+    Pupils.prototype.read = function (objectId) {
+        //validate id, check if person with this id exists
+        if (!objectId || objectId >= this.counter || objectId < 0) {
+            throw new Error('Invalid Id');
+        }
+        else if (!this.arr.find(function (obj) { return obj.id === objectId; })) {
+            throw new Error('Person with provided Id does not exist');
+        }
+        return this.arr.find(function (obj) { return obj.id === objectId; });
     };
     return Pupils;
 }(CommonMethods));
