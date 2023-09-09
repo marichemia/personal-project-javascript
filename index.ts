@@ -7,7 +7,7 @@ interface Subject {
 
 interface PhoneObj {
     phone: string;
-    primary: boolean
+    primary: boolean;
 }
 
 interface Pupil {
@@ -137,6 +137,8 @@ class Pupils extends CommonMethods {
     }
 
     add(object: Pupil): number {
+
+        this.validatePhones(object.phones);
 
         this.arr.push(object);
         object.id = this.counter;

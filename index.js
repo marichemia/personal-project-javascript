@@ -101,6 +101,7 @@ var Pupils = /** @class */ (function (_super) {
         return _this;
     }
     Pupils.prototype.add = function (object) {
+        this.validatePhones(object.phones);
         this.arr.push(object);
         object.id = this.counter;
         this.counter++;
