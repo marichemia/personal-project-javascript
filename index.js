@@ -33,12 +33,20 @@ var CommonMethods = /** @class */ (function () {
         //(+1 000-000-0000)
         var phoneRegex = /^\+1\s\d{3}-\d{3}-\d{4}$/;
         var primary = 0;
+        !arr.map(function (item) {
+            if (item.primary === true)
+                primary++;
+        });
         if (arr.length === 0) {
             throw new Error('phone array is empty');
         }
-        arr.some(function (item) {
-            phoneRegex.test(item.phone);
-        });
+        else if (!arr.every(function (item) { return phoneRegex.test(item.phone); })) {
+            throw new Error('phone format is wrong');
+        }
+        else if (primary > 1) {
+            throw new Error('primary phone number already exists');
+        }
+        primary = 0;
         return true;
     };
     CommonMethods.prototype.validateEmail = function (str) {
