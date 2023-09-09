@@ -13,10 +13,10 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var commonMethods = /** @class */ (function () {
-    function commonMethods() {
+var CommonMethods = /** @class */ (function () {
+    function CommonMethods() {
     }
-    commonMethods.prototype.isPositive = function (num) {
+    CommonMethods.prototype.isPositive = function (num) {
         if (num >= 0) {
             return true;
         }
@@ -24,7 +24,27 @@ var commonMethods = /** @class */ (function () {
             return false;
         }
     };
-    return commonMethods;
+    CommonMethods.prototype.validateDOB = function (str) {
+        //(YYYY-MM-DD)
+        var dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+        return dateRegex.test(str);
+    };
+    CommonMethods.prototype.validatePhones = function (arr) {
+        //(+1 000-000-0000)
+        var phoneRegex = /^\+1\s\d{3}-\d{3}-\d{4}$/;
+        var primary = 0;
+        if (arr.length === 0) {
+            throw new Error('phone array is empty');
+        }
+        arr.some(function (item) {
+            phoneRegex.test(item.phone);
+        });
+        return true;
+    };
+    CommonMethods.prototype.validateEmail = function (str) {
+        return true;
+    };
+    return CommonMethods;
 }());
 var Subjects = /** @class */ (function (_super) {
     __extends(Subjects, _super);
@@ -63,4 +83,20 @@ var Subjects = /** @class */ (function (_super) {
         return this.subjects;
     };
     return Subjects;
-}(commonMethods));
+}(CommonMethods));
+var Pupils = /** @class */ (function (_super) {
+    __extends(Pupils, _super);
+    function Pupils() {
+        var _this = _super.call(this) || this;
+        _this.arr = [];
+        _this.counter = 0;
+        return _this;
+    }
+    Pupils.prototype.add = function (object) {
+        this.arr.push(object);
+        object.id = this.counter;
+        this.counter++;
+        return object.id;
+    };
+    return Pupils;
+}(CommonMethods));

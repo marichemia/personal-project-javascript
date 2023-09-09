@@ -5,18 +5,21 @@ interface Subject {
     id?: number;
 }
 
+interface PhoneObj {
+    phone: string;
+    primary: boolean
+}
+
 interface Pupil {
     name: {
         first: string;
         last: string;
     };
     dateOfBirth: string;
-    phones: {
-        phone: string;
-        primary: boolean
-    }[];
+    phones: PhoneObj[];
     sex: 'male' | 'female' | 'Male' | 'Female';
-    description: string;
+    description?: string;
+    id?: number;
 }
 
 interface Teacher extends Pupil {
@@ -31,7 +34,7 @@ interface Teacher extends Pupil {
 
 
 
-class commonMethods {
+class CommonMethods {
     isPositive(num: number): boolean {
         if (num >= 0) {
             return true;
@@ -39,9 +42,45 @@ class commonMethods {
             return false;
         }
     }
+
+    validateDOB(str: string): boolean {
+
+        //(YYYY-MM-DD)
+        const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+        return dateRegex.test(str);
+
+    }
+
+    validatePhones(arr: PhoneObj[]): boolean {
+
+        //(+1 000-000-0000)
+
+        const phoneRegex = /^\+1\s\d{3}-\d{3}-\d{4}$/;
+        let primary = 0;
+
+        !arr.map((item: PhoneObj) => {
+            if (item.primary === true) primary++;
+        })
+
+        if (arr.length === 0) {
+            throw new Error('phone array is empty')
+        } else if (!arr.every((item: PhoneObj) => phoneRegex.test(item.phone))) {
+            throw new Error('phone format is wrong')
+        } else if (primary > 1) {
+            throw new Error('primary phone number already exists')
+        }
+
+        primary = 0;
+
+        return true;
+    }
+
+    validateEmail(str: string): boolean {
+        return true;
+    }
 }
 
-class Subjects extends commonMethods {
+class Subjects extends CommonMethods {
     subjects: Subject[];
     counter: number;
 
@@ -85,6 +124,29 @@ class Subjects extends commonMethods {
     }
 
 }
+
+class Pupils extends CommonMethods {
+
+    arr: Pupil[];
+    counter: number;
+
+    constructor() {
+        super();
+        this.arr = [];
+        this.counter = 0;
+    }
+
+    add(object: Pupil): number {
+
+        this.arr.push(object);
+        object.id = this.counter;
+        this.counter++;
+
+        return object.id;
+    }
+
+}
+
 
 
 
