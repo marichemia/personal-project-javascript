@@ -74,8 +74,25 @@ class CommonMethods {
         primary = 0;
     }
 
-    validateEmails(arr: EmailObj[]): boolean {
-        return true;
+    validateEmails(arr: EmailObj[]): void {
+
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        let primary = 0;
+
+        !arr.map((item: EmailObj) => {
+            if (item.primary === true) primary++;
+        })
+
+        if (arr.length === 0) {
+            throw new Error('Emails array is empty');
+        } else if (!arr.every((item: EmailObj) => emailRegex.test(item.email))) {
+            throw new Error('email format is wrong');
+        } else if (primary > 1) {
+            throw new Error('primary email already exists');
+        }
+
+        primary = 0;
+
     }
 }
 
@@ -135,7 +152,7 @@ class Pupils extends CommonMethods {
         this.counter = 0;
     }
 
-    add(object: Pupil): Pupil {
+    add(object: Pupil): Pupil | number {
 
         this.validatePhones(object.phones);
         this.validateDOB(object.dateOfBirth);
@@ -180,6 +197,31 @@ class Teachers extends Pupils {
 
     constructor() {
         super();
+    }
+
+    add(object: Teacher): number {
+        this.validatePhones(object.phones);
+        this.validateDOB(object.dateOfBirth);
+        this.validateEmails(object.emails);
+
+        this.arr.push({ ...object, id: this.counter });
+        this.counter++;
+
+        return this.arr[this.arr.length - 1].id!;
+    }
+
+    update(objectId: number | undefined, updatedData: Teacher): number {
+
+        this.read(objectId);
+        this.validatePhones(updatedData.phones);
+        this.validateDOB(updatedData.dateOfBirth);
+        this.validateEmails(updatedData.emails);
+
+
+        const index = this.arr.findIndex(obj => obj.id === objectId);
+        Object.assign(this.arr[index], updatedData);
+
+        return this.arr[index].id!;
     }
 
 }
