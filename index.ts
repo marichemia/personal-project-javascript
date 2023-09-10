@@ -176,6 +176,14 @@ class Pupils extends CommonMethods {
 
 }
 
+class Teachers extends Pupils {
+
+    constructor() {
+        super();
+    }
+
+}
+
 
 
 
