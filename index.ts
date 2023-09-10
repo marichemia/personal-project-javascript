@@ -34,6 +34,12 @@ interface Teacher extends Pupil {
     }[];
 }
 
+interface Group {
+    room: number;
+    id: number;
+    pupils: Pupil[];
+}
+
 class CommonMethods {
     isPositive(num: number): boolean {
         if (num >= 0) {
@@ -223,6 +229,68 @@ class Teachers extends Pupils {
 
         return this.arr[index].id!;
     }
+
+}
+
+class Groups extends CommonMethods {
+
+    groups: Group[];
+    counter: number;
+
+    constructor() {
+        super();
+        this.groups = [];
+        this.counter = 0;
+    }
+
+    add(room: number): number {
+        if (room < 0) {
+            throw new Error('room number is invalid');
+        }
+
+        this.groups.push({ 'room': room, 'id': this.counter, 'pupils': [] });
+        this.counter++;
+
+        return this.groups[this.groups.length - 1].id;
+    }
+
+    addPupil(groupId: number, pupil: Pupil): number {
+
+        const group = this.groups.find(obj => obj.id === groupId);
+
+        if (!group) {
+            throw new Error('group with provided id does not exist')
+        }
+
+        group.pupils.push(pupil);
+
+        return group.id;
+    }
+
+    removePupil(groupId: number, pupilId: number): boolean {
+
+        const group = this.groups.find(obj => obj.id === groupId);
+        const groupIndex = this.groups.findIndex(obj => obj.id === groupId);
+        const pupil = group!.pupils.find(obj => obj.id === pupilId);
+        const pupilIndex = group!.pupils.findIndex(obj => obj.id === pupilId);
+
+        if (groupId < 0 || typeof groupId !== 'number') {
+            throw new Error('groupId invalid or missing');
+        } else if (pupilId < 0 || typeof pupilId !== 'number') {
+            throw new Error('pupilId invalid or missing');
+        } else if (!group) {
+            throw new Error('group with provided id does not exist');
+        } else if (!pupil) {
+            throw new Error('pupil with provided id does not exist');
+        }
+
+        this.groups[groupIndex].pupils.splice(pupilIndex, 1);
+
+        return true;
+
+    }
+
+
 
 }
 
