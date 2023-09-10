@@ -22,7 +22,7 @@ interface Pupil {
     };
     dateOfBirth: string;
     phones: PhoneObj[];
-    sex: 'male' | 'female' | 'Male' | 'Female';
+    sex: 'male' | 'female';
     description?: string;
     id?: number;
 }
@@ -33,8 +33,6 @@ interface Teacher extends Pupil {
         subject: string;
     }[];
 }
-
-
 
 class CommonMethods {
     isPositive(num: number): boolean {
@@ -142,17 +140,16 @@ class Pupils extends CommonMethods {
         this.validatePhones(object.phones);
         this.validateDOB(object.dateOfBirth);
 
-        this.arr.push(object);
-        object.id = this.counter;
+        this.arr.push({ ...object, id: this.counter });
         this.counter++;
 
-        return object;
+        return this.arr[this.arr.length - 1];
     }
 
     read(objectId: number | undefined): Pupil {
 
         //validate id, check if person with this id exists
-        if (!objectId || objectId >= this.counter || objectId < 0) {
+        if (objectId === undefined || objectId >= this.counter || objectId < 0) {
             throw new Error('Invalid Id');
         } else if (!this.arr.find(obj => obj.id === objectId)) {
             throw new Error('Person with provided Id does not exist');
@@ -161,13 +158,21 @@ class Pupils extends CommonMethods {
         return this.arr.find(obj => obj.id === objectId)!;
     }
 
-    update(objectId: number, updatedData: Pupil): number {
+    update(objectId: number | undefined, updatedData: Pupil): number {
 
+        this.read(objectId);
+        this.validatePhones(updatedData.phones);
+        this.validateDOB(updatedData.dateOfBirth);
+
+        const index = this.arr.findIndex(obj => obj.id === objectId);
+        Object.assign(this.arr[index], updatedData);
+
+        return this.arr[index].id!;
     }
 
-
-
-
+    remove(objectId: number | undefined): boolean {
+        return !!this.arr.splice(this.arr.findIndex((item) => item.id === objectId), 1)
+    }
 
 }
 
