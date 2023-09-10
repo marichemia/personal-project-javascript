@@ -40,6 +40,20 @@ interface Group {
     pupils: Pupil[];
 }
 
+interface RecordObj {
+    pupilId: number;
+    teacherId: number;
+    subjectId: number;
+    lesson: number;
+    mark: number;
+}
+
+interface Gradebook {
+    id: number;
+    groupId: number;
+    records: RecordObj[];
+}
+
 class CommonMethods {
     isPositive(num: number): boolean {
         if (num >= 0) {
@@ -158,7 +172,7 @@ class Pupils extends CommonMethods {
         this.counter = 0;
     }
 
-    add(object: Pupil): Pupil | number {
+    add(object: Pupil): Pupil | any {
 
         this.validatePhones(object.phones);
         this.validateDOB(object.dateOfBirth);
@@ -322,6 +336,44 @@ class Groups extends CommonMethods {
 
     readAll(): Group[] {
         return this.groups;
+    }
+
+}
+
+class Gradebooks extends CommonMethods {
+
+    groups: Groups;
+    teachers: Teachers;
+    subjects: Subjects;
+    gradebooks: Map<number, Gradebook>;
+    counter: number;
+
+    constructor(groups: Groups, teachers: Teachers, subjects: Subjects) {
+
+        super()
+        this.groups = groups;
+        this.teachers = teachers;
+        this.subjects = subjects;
+        this.gradebooks = new Map();
+        this.counter = 0;
+
+    }
+
+    add(groupId: number): any {
+
+        if (!this.groups.read(groupId)) {
+            throw new Error('groupId invalid');
+        }
+
+
+        this.gradebooks.set(this.counter, {
+            id: this.counter,
+            groupId: groupId,
+            records: []
+        });
+
+        this.counter++;
+        return this.gradebooks.get(this.counter - 1)!.id;
     }
 
 }
