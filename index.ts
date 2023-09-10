@@ -290,7 +290,39 @@ class Groups extends CommonMethods {
 
     }
 
+    update(groupId: number, object: { room: number }): boolean {
 
+        const groupIndex = this.groups.findIndex(obj => obj.id === groupId);
+
+        if (object.room < 0) {
+            throw new Error('room number invalid');
+        }
+
+        this.groups[groupIndex].room = object.room;
+
+        return true;
+
+    }
+
+    read(groupId: number): Group {
+
+        if (groupId < 0 || groupId >= this.counter) {
+            throw new Error('Invalid group id');
+        }
+
+        const groupIndex = this.groups.findIndex(obj => obj.id === groupId);
+
+        if (groupIndex === -1) {
+            throw new Error('group with provided id does not exist');
+        }
+
+        return this.groups[groupIndex];
+
+    }
+
+    readAll(): Group[] {
+        return this.groups;
+    }
 
 }
 
