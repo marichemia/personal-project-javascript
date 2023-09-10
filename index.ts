@@ -359,7 +359,7 @@ class Gradebooks extends CommonMethods {
 
     }
 
-    add(groupId: number): any {
+    add(groupId: number): number {
 
         if (!this.groups.read(groupId)) {
             throw new Error('groupId invalid');
@@ -375,6 +375,13 @@ class Gradebooks extends CommonMethods {
         this.counter++;
         return this.gradebooks.get(this.counter - 1)!.id;
     }
+
+    clear(): boolean {
+        this.gradebooks = new Map();
+        return true;
+    }
+
+
 
 }
 
