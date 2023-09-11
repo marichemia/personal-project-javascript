@@ -418,7 +418,28 @@ class Gradebooks extends CommonMethods {
 
     }
 
+    readAll(gradebookId: number): { name: string, records: RecordObj[] }[] {
 
+        const gradebook = this.gradebooks.get(gradebookId);
+
+        if (!gradebook) {
+            throw new Error('Gradebook with provided id not found');
+        }
+
+        const group = this.groups.read(gradebook.groupId);
+        const pupils = group.pupils;
+
+        return pupils.map((pupil) => {
+            const pupilName = `${pupil.name.first} ${pupil.name.last}`;
+            const records = gradebook.records.filter((record: RecordObj) => record.pupilId === pupil.id);
+
+            return {
+                name: pupilName,
+                records: records
+            };
+        })
+
+    }
 }
 
 
