@@ -381,6 +381,42 @@ class Gradebooks extends CommonMethods {
         return true;
     }
 
+    addRecord(gradebookId: number, record: RecordObj) {
+
+        const gradebook = this.gradebooks.get(gradebookId);
+        if (!gradebook) {
+            throw new Error('invalid gradebookId');
+        }
+
+        gradebook.records.push(record);
+
+    }
+
+    read(gradebookId: number, pupilId: number): { name: string, records: RecordObj[] } {
+
+        const gradebook = this.gradebooks.get(gradebookId);
+
+        if (!gradebook) {
+            throw new Error('Gradebook with provided id not found');
+        }
+
+        const group = this.groups.read(gradebook.groupId);
+        const pupil = group.pupils.find(pupil => pupil.id === pupilId);
+
+        if (!pupil) {
+            throw new Error(`Pupil with ID ${pupilId} not found in gradebook ${gradebookId}.`);
+        }
+
+        const pupilName = `${pupil.name.first} ${pupil.name.last}`;
+        const records = gradebook.records.filter((record: RecordObj) => record.pupilId === pupilId);
+
+
+        return {
+            name: pupilName,
+            records: records
+        }
+
+    }
 
 
 }
