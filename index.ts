@@ -30,7 +30,7 @@ abstract class CommonMethods {
         });
 
         if (arr.length === 0) {
-            throw new Error('Array is empty');
+            throw new Error('array is empty');
         } else if (!arr.every((item: T) => {
             if (this.isPhoneObj(item)) {
                 return /^\+1\s\d{3}-\d{3}-\d{4}$/.test(item.phone);
@@ -38,9 +38,9 @@ abstract class CommonMethods {
                 return /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(item.email);
             }
         })) {
-            throw new Error('Contact format is wrong');
+            throw new Error('format is wrong');
         } else if (primary > 1) {
-            throw new Error('Primary contact already exists');
+            throw new Error('primary contact already exists');
         }
 
         primary = 0;
