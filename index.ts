@@ -1,6 +1,6 @@
 import { Subject, PhoneObj, EmailObj, Pupil, Teacher, Group, RecordObj, Gradebook } from "./interfaces";
 
-class CommonMethods {
+abstract class CommonMethods {
     isPositive(num: number): boolean {
         if (num >= 0) {
             return true;
@@ -50,7 +50,7 @@ class CommonMethods {
 
 class Subjects extends CommonMethods {
     subjects: Subject[];
-    counter: number;
+    protected counter: number;
 
     constructor() {
         super();
@@ -95,8 +95,8 @@ class Subjects extends CommonMethods {
 
 class Pupils extends CommonMethods {
 
-    arr: Pupil[];
-    counter: number;
+    public arr: Pupil[];
+    protected counter: number;
 
     constructor() {
         super();
@@ -181,8 +181,8 @@ class Teachers extends Pupils {
 
 class Groups extends CommonMethods {
 
-    groups: Group[];
-    counter: number;
+    public groups: Group[];
+    private counter: number;
 
     constructor() {
         super();
@@ -279,7 +279,7 @@ class Gradebooks extends CommonMethods {
     teachers: Teachers;
     subjects: Subjects;
     gradebooks: Map<number, Gradebook>;
-    counter: number;
+    private counter: number;
 
     constructor(groups: Groups, teachers: Teachers, subjects: Subjects) {
 
